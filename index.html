@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>برنامه مراقبت همکاران</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      direction: rtl;
+      background: linear-gradient(to bottom right, #fdf6e3, #e3f2fd);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .names {
+      width: 200px;
+      background: #ffffffdd;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .names h3 {
+      margin-top: 0;
+      color: #2c3e50;
+      font-weight: 700;
+    }
+    .names ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .names li {
+      padding: 10px;
+      cursor: pointer;
+      background: #ffe082;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .names li:hover {
+      background: #ffca28;
+      transform: scale(1.05);
+    }
+    table {
+      border-collapse: collapse;
+      font-size: 14px;
+      background: #ffffffdd;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #dce1e7;
+      padding: 10px 14px;
+      text-align: center;
+    }
+    th {
+      background-color: #8e24aa;
+      color: white;
+      font-weight: bold;
+    }
+    .highlight {
+      background-color: #ff7043;
+      color: #fff;
+      font-weight: bold;
+    }
+    .faded {
+      opacity: 0.2;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="names">
+    <h3>لیست اسامی</h3>
+    <ul id="person-list"></ul>
+  </div>
+  <div>
+    <table id="schedule">
+      <thead>
+        <tr>
+          <th>روز</th>
+          <th>تاریخ</th>
+          <th colspan="14">برنامه مراقبت</th>
+        </tr>
+      </thead>
+      <tbody id="schedule-body">
+        <!-- داده‌ها اینجا بارگذاری می‌شوند -->
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  const data = [
+    { day: 'دوشنبه', date: '۱۴۰۴/۰۲/۲۹', names: ['ذوالقدر','ناطقی','درخشانی','فربود','قنبری','محبی پور','قمی','عرب خراسانی','مرآتی','منعمی','نوروزی','شریعتی','کاسه گران','احمد زاده'] },
+    { day: 'چهارشنبه', date: '۱۴۰۴/۰۲/۳۱', names: ['ناطقی','محبی پور','یوسف زاده','یعقوبی','نوروزی','غلامی','درخشانی','سعیدی','امام','نظافت','رضایی','عرب خراسانی','شجاعت','کاسه گران'] },
+    { day: 'شنبه', date: '۱۴۰۴/۰۳/۰۳', names: ['یوسف زاده','نوروزی','قاسمی','منعمی','ناطقی','یعقوبی','سعیدی','امینی','محبی پور','احمد زاده','غلامی','رضایی','شریعتی','عرب خراسانی'] },
+    { day: 'دوشنبه', date: '۱۴۰۴/۰۳/۰۵', names: ['منعمی','قاسمی','فربود','درخشانی','کنجکاو','نوروزی','ذوالقدر','نظافت','آشوری','مرآتی','ناطقی'] },
+    { day: 'چهارشنبه', date: '۱۴۰۴/۰۳/۰۷', names: ['سعیدی','محبی پور','اشوری','فربود','درخشانی','شریعتی','غلامی','قنبری','کاسه گران','شجاعت','نظافت','احمد زاده','رضایی','برقعی'] },
+    { day: 'شنبه', date: '۱۴۰۴/۰۳/۱۰', names: ['خان زاده','مرآتی','یوسف زاده','قمی','غلامی','داود آبادی','کاسه گران','نظافت','اشوری','عرب خراسانی','قنبری','رضایی','فربود','امینی'] },
+    { day: 'دوشنبه', date: '۱۴۰۴/۰۳/۱۲', names: ['غلامی','یوسف زاده','ذوالقدر','خان زاده','مراتی','کاسه گران','شجاعت','آشوری','نظافت','احمد زاده','قنبری','رضایی','منعمی','فربود'] },
+    { day: 'شنبه', date: '۱۴۰۴/۰۳/۱۷', names: ['شجاعت','نظافت','خان زاده','شریعتی','کاسه گران','احمد زاده','یوسف زاده','قنبری','عرب خراسانی','مرآتی','امینی','منعمی','برقعی','محبی پور'] },
+    { day: 'دوشنبه', date: '۱۴۰۴/۰۳/۱۹', names: ['ناطقی','نوروزی','احمد زاده','ذوالقدر','عرب خراسانی','شریعتی','مرآتی','یوسف زاده'] },
+    { day: 'چهارشنبه', date: '۱۴۰۴/۰۳/۲۱', names: ['نوروزی','منعمی','رضایی','درخشانی','امینی','شریعتی','ناطقی','قنبری'] }
+  ];
+
+  const scheduleBody = document.getElementById('schedule-body');
+  const personList = document.getElementById('person-list');
+
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${row.day}</td><td>${row.date}</td>` + row.names.map(n => `<td class="name-cell">${n}</td>`).join('');
+    scheduleBody.appendChild(tr);
+  });
+
+  const uniqueNames = [...new Set(data.flatMap(d => d.names))].sort();
+  uniqueNames.forEach(name => {
+    const li = document.createElement('li');
+    li.textContent = name;
+    li.onclick = () => {
+      document.querySelectorAll('.name-cell').forEach(cell => {
+        if (cell.textContent === name) {
+          cell.classList.add('highlight');
+          cell.classList.remove('faded');
+        } else {
+          cell.classList.remove('highlight');
+          cell.classList.add('faded');
+        }
+      });
+    };
+    personList.appendChild(li);
+  });
+</script>
+</body>
+</html>
